@@ -59,7 +59,7 @@ def frame(f, end=False):
     # axes
     d.line([PX0, PY0 - 10, PX0, PY1], fill=CHALK, width=3)
     d.line([PX0, PY1, PX1, PY1], fill=CHALK, width=3)
-    d.text((8, PY0 - 6), "$PF", font=vt(22), fill=GREY)
+    d.text((8, PY0 - 6), "$PROOFACTORY", font=vt(20), fill=GREY)
 
     # bars (appear from f=8, one per 4 frames, grow over 3)
     for i in range(NBARS):
@@ -89,9 +89,9 @@ def frame(f, end=False):
         msg = "plotting the 3% stream\u2026" if f >= 8 else "collecting round data\u2026"
         d.text((bx0 + 16, by0 + 28), msg, font=vt(28), fill=GREY)
     else:
-        d.text((bx0 + 16, by0 + 8), f"D(n) = 30 \u00b7 {R}^n  per round", font=vt(30), fill=CHALK)
-        d.text((bx0 + 16, by0 + 42), f"n=16: {int(round(dval(15))):,} $PF   \u00b7   n=30: {int(round(dval(29))):,} $PF",
-               font=vt(26), fill=YELLOW)
+        d.text((bx0 + 16, by0 + 8), f"D(n) = 30 \u00b7 {R}^n  per round", font=vt(28), fill=CHALK)
+        d.text((bx0 + 16, by0 + 40), f"n=16: {int(round(dval(15))):,} \u00b7 n=30: {int(round(dval(29))):,} $PROOFACTORY",
+               font=vt(22), fill=YELLOW)
 
     # ---------- cumulative line ----------
     if 8 <= f < 40:
@@ -100,8 +100,8 @@ def frame(f, end=False):
         k = min(NBARS, 1 + (f - 40) // 4)
         if end:
             k = NBARS
-        d.text((24, 426), f"total distributed after {k} rounds: {int(round(cum(k))):,} $PF",
-               font=vt(26), fill=GREEN)
+        d.text((24, 426), f"total after {k} rounds: {int(round(cum(k))):,} $PROOFACTORY",
+               font=vt(22), fill=GREEN)
     if end:
         stamp(img, (360, 240), "COMPOUNDED", RED, 20, -8)
         d = ImageDraw.Draw(img)

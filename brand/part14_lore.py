@@ -50,9 +50,9 @@ def g8_frame(f, end=False):
 
     # pot
     pot = sum(int(tok) for b in BETS[:nb] for tok in b.split() if tok.isdigit())
-    d.rectangle([300, 286, 456, 336], fill=BOARD, outline=YELLOW, width=3)
-    d.text((312, 292), "POT", font=silk(10, bold=True), fill=GREY)
-    d.text((312, 308), f"{pot} $PF", font=vt(28), fill=YELLOW)
+    d.rectangle([272, 286, 456, 340], fill=BOARD, outline=YELLOW, width=3)
+    d.text((284, 292), "POT", font=silk(10, bold=True), fill=GREY)
+    d.text((284, 310), f"{pot} $PROOFACTORY", font=vt(22), fill=YELLOW)
 
     # odds flicker
     rng = random.Random(f // 3)

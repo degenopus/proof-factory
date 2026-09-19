@@ -79,7 +79,7 @@ def frame(f, show_stamp=False):
     fh = int((ty1 - ty0 - 24) * lvl)
     d.rectangle([tx0 + 8, ty1 - 8 - fh, tx1 - 8, ty1 - 8], fill=ACCENT)
     d.text((tx0 + 10, ty0 + 8), "REVENUE", font=silk(10, bold=True), fill=CHALK)
-    d.text((tx0 + 8, ty1 + 10), "1000 $PROOF", font=vt(26), fill=CHALK)
+    d.text((tx0 + 8, ty1 + 10), "1000 $PROOFACTORY", font=vt(22), fill=CHALK)
     if f >= 14:
         d.text((tx0 + 8, ty1 + 38), "round settled", font=vt(22), fill=GREEN)
 
@@ -120,7 +120,7 @@ def frame(f, show_stamp=False):
         tagc = (255, 158, 207) if kind == "CONTRIBUTOR" else (159, 208, 255)
         d.text((wx + 8, wy0 + 32), kind, font=silk(9, bold=True), fill=tagc)
         bal = landed[i] * COIN_VAL
-        d.text((wx + 8, wy0 + 52), f"+{bal:.1f} $PF", font=vt(26), fill=YELLOW if bal else GREY)
+        d.text((wx + 8, wy0 + 52), f"+{bal:.1f}", font=vt(28), fill=YELLOW if bal else GREY)
 
     # ---- coins in flight ----
     for launch, pts in build_paths():
@@ -137,7 +137,7 @@ def frame(f, show_stamp=False):
     # ---- totals ----
     total = sum(landed.values()) * COIN_VAL
     d.rectangle([24, 412, 456, 462], fill=BOARD, outline=CHALK, width=3)
-    d.text((38, 418), f"distributed: {total:.1f} / 30 $PROOF", font=vt(26), fill=YELLOW)
+    d.text((38, 418), f"distributed: {total:.1f} / 30 $PROOFACTORY", font=vt(22), fill=YELLOW)
     d.text((38, 442), "no forms. no claims. automatic.",
            font=vt(20), fill=(159, 208, 255))
 

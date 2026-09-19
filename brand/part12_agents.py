@@ -64,7 +64,7 @@ def frame(f):
             if i < shown:
                 # check-sweep after step 34; line 2 becomes the lie at 52
                 if f >= 52 and i == 2:
-                    txt, col = LIE_STEP, RED
+                    txt, col = LIE_STEP, ORANGE
                 if 34 <= f < 52 and i == min(3, (f - 34) // 4):
                     col = GREEN
                 d.text((lx0 + 16, y), txt, font=vt(28), fill=col)
@@ -74,7 +74,7 @@ def frame(f):
         if 30 <= f < 34:
             d.text((lx0 + 16, ly0 + 42 + 4 * 40 + 2), "proof assembled.", font=vt(26), fill=(159, 208, 255))
         if f >= 52:
-            stamp(img, (lx1 - 90, ly0 + 152), "LIE", RED, 20, -8)
+            stamp(img, (lx1 - 90, ly0 + 152), "LIE", ORANGE, 20, -8)
             d = ImageDraw.Draw(img)
 
     # ---------- working memory (bottom): hex noise + progress ----------
@@ -104,7 +104,7 @@ def frame(f):
     elif f < 52:
         st, c = "STATUS: PRESENTING PROOF", (159, 208, 255)
     else:
-        st, c = "STATUS: LIE INJECTED (err 35%)", RED
+        st, c = "STATUS: LIE INJECTED (err 35%)", ORANGE
     d.text((24, 398), st, font=silk(12, bold=True), fill=c)
     if f >= 52:
         d.text((24, 420), "they compute fast. honesty is optional.", font=vt(28), fill=CHALK)

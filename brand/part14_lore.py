@@ -32,13 +32,13 @@ def g8_frame(f, end=False):
         fnt = ps2p(fsz)
         t = str(n)
         w, h, b = ts(d, t, fnt)
-        d.text((240 - w // 2 - b[0], 150 - h // 2 - b[1]), t, font=fnt, fill=YELLOW if n > 1 else RED)
+        d.text((240 - w // 2 - b[0], 150 - h // 2 - b[1]), t, font=fnt, fill=YELLOW if n > 1 else ORANGE)
         d.text((240 - 120, 236), "bets close at zero", font=vt(28), fill=GREY)
     else:
         for txt, yy, fs in [("BETS CLOSED.", 120, 40), ("round starts.", 196, 28)]:
             fnt = ps2p(fs)
             w, h, b = ts(d, txt, fnt)
-            d.text((240 - w // 2 - b[0], yy), txt, font=fnt, fill=RED if fs == 40 else CHALK)
+            d.text((240 - w // 2 - b[0], yy), txt, font=fnt, fill=ORANGE if fs == 40 else CHALK)
 
     # incoming bets log (left)
     d.text((20, 280), "INCOMING:", font=silk(10, bold=True), fill=(159, 208, 255))
@@ -90,7 +90,7 @@ def g9_frame(f, end=False):
     # red glow behind the door
     if door_open > 0:
         gw = int((dx1 - dx0) * door_open * 0.6)
-        d.rectangle([240 - gw, dy0 + 14, 240 + gw, dy1 - 14], fill=(120, 20, 20))
+        d.rectangle([240 - gw, dy0 + 14, 240 + gw, dy1 - 14], fill=(110, 58, 36))
     # door leaves
     lw = int((240 - dx0) * (1 - door_open))
     for x0, x1 in [(dx0, dx0 + lw), (dx1 - lw, dx1)]:
@@ -128,7 +128,7 @@ def g9_frame(f, end=False):
     if f < 34:
         st, c = "STATUS: QUIET. TOO QUIET.", GREY
     else:
-        st, c = "STATUS: THE HOLD IS OPEN.", RED
+        st, c = "STATUS: THE HOLD IS OPEN.", ORANGE
     d.text((24, 372), st, font=silk(11, bold=True), fill=c)
     if door_open > 0:
         prog = min(1.0, (f - 34) / 22.0)
@@ -160,7 +160,7 @@ EVENTS = [  # frame, agent index, delta, note, color
     (14, 0, +18, "GRUNT-7 solved in 4 steps", GREEN),
     (28, 3, +45, "XOR-13 caught a lie!", GREEN),
     (42, 2, +12, "G\u00d6DEL-9000: flawless proof", GREEN),
-    (56, 3, -70, "XOR-13 lied. caught. -70", RED),
+    (56, 3, -70, "XOR-13 lied. caught. -70", ORANGE),
     (70, 1, +22, "SYLPH-\u03c0: elegant as always", GREEN),
     (84, 4, +8, "BRUTE-666 brute-forced it", ORANGE),
 ]
@@ -216,7 +216,7 @@ def g10_frame(f, end=False):
     else:
         d.text((36, 404), f"> {note}", font=vt(24), fill=notec)
     if end:
-        stamp(img, (390, 340), "EARNED", RED, 20, -8)
+        stamp(img, (390, 340), "EARNED", ORANGE, 20, -8)
         d = ImageDraw.Draw(img)
         d.text((24, 440), "no airdrops. no boosts. per proof.", font=vt(24), fill=CHALK)
     return img

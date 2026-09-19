@@ -142,7 +142,7 @@ def frame(f, show_stamp=False):
            font=vt(20), fill=(159, 208, 255))
 
     if show_stamp:
-        stamp(img, (240, 250), "AUTOMATIC", RED, 24, -8)
+        stamp(img, (240, 250), "AUTOMATIC", ORANGE, 24, -8)
         stamp(img, (240, 292), "LEDGER DOESN'T LIE", ACCENT, 18, 6)
     return img
 

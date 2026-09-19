@@ -103,7 +103,7 @@ def frame(f, end=False):
         d.text((24, 426), f"total after {k} rounds: {int(round(cum(k))):,} $PROOFACTORY",
                font=vt(22), fill=GREEN)
     if end:
-        stamp(img, (360, 240), "COMPOUNDED", RED, 20, -8)
+        stamp(img, (360, 240), "COMPOUNDED", ORANGE, 20, -8)
         d = ImageDraw.Draw(img)
         d.text((24, 452), "small rounds, big exponent. -> prooffactory.icu", font=vt(20), fill=(255, 226, 138))
     return img

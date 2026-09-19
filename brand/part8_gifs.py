@@ -77,10 +77,10 @@ def g1(path):
         d = ImageDraw.Draw(img)
         r = 6 + k * 5
         cx, cy = 240, y + 26
-        d.ellipse([cx - r, cy - r, cx + r, cy + r], outline=RED, width=4)
+        d.ellipse([cx - r, cy - r, cx + r, cy + r], outline=ORANGE, width=4)
         frames.append(img)
     # flash + stamp slam
-    slam = stamp_layer("LIE INJECTED", RED, 24)
+    slam = stamp_layer("LIE INJECTED", ORANGE, 24)
     rng = random.Random(4)
     for k in range(5):
         img = img0.copy()
@@ -89,7 +89,7 @@ def g1(path):
         img.paste(lay, (240 - lay.width // 2 + rng.randint(-6, 6),
                         y + 20 - lay.height // 2 + rng.randint(-6, 6)), lay)
         frames.append(img)
-    flash = Image.new("RGB", (W, H), RED)
+    flash = Image.new("RGB", (W, H), ORANGE)
     frames.append(flash)
     img = img0.copy()
     lay = slam.resize((int(slam.width * 1.35), int(slam.height * 1.35)), Image.NEAREST)
@@ -104,7 +104,7 @@ def g1(path):
             img.paste(lay, (240 - lay.width // 2, y + 20 - lay.height // 2), lay)
             d = ImageDraw.Draw(img)
             d.text((34, y + 84), "INJECTED LIE TYPE:", font=silk(12, bold=True), fill=GREY)
-            d.text((34, y + 112), "> " + t, font=vt(40), fill=RED)
+            d.text((34, y + 112), "> " + t, font=vt(40), fill=ORANGE)
             frames.append(img)
     for _ in range(3):
         frames.append(frames[-1])
@@ -114,7 +114,7 @@ def g1(path):
     for t, c in lines:
         d.text((34, y2), t, font=vt(32), fill=c)
         y2 += 48
-    d.text((34, y2 + 14), "one of these lines is a lie.", font=vt(36), fill=RED)
+    d.text((34, y2 + 14), "one of these lines is a lie.", font=vt(36), fill=ORANGE)
     d.text((34, y2 + 56), "find it. -> prooffactory.icu", font=vt(30), fill=CHALK)
     for _ in range(14):
         frames.append(img)
@@ -187,7 +187,7 @@ def g2(path):
             d.rectangle([sx, sy, sx + 5, sy + 5], fill=(120, 80, 40))
         frames.append(img)
     # sticker slap
-    sab = stamp_layer("SABOTAGED", RED, 22)
+    sab = stamp_layer("SABOTAGED", ORANGE, 22)
     for k in range(5):
         img = dither(W, H, seed=33)
         d = ImageDraw.Draw(img)
@@ -246,7 +246,7 @@ def g2(path):
     d.text((28, 90), "coffee the leader.", font=vt(38), fill=INK)
     d.text((28, 140), "steal the round.", font=vt(38), fill=ACCENT)
     d.text((28, 190), "costs credits.", font=vt(38), fill=GREY)
-    d.text((28, 240), "worth every one.", font=vt(38), fill=RED)
+    d.text((28, 240), "worth every one.", font=vt(38), fill=ORANGE)
     d.text((28, 330), "no referee. no mercy.", font=vt(34), fill=INK)
     d.text((28, 376), "-> prooffactory.icu", font=vt(34), fill=ACCENT)
     for _ in range(14):
@@ -274,7 +274,7 @@ def g3(path):
         d.rectangle([x0 + 250, y0 + 16, x0 + 394, y0 + 40], outline=CHALK, width=2)
         frac = err_frac if i == active_idx else err / 0.35
         bw = int(140 * min(1, frac))
-        colr = RED if err > 0.3 else (ORANGE if err > 0.1 else GREEN)
+        colr = PINK if err > 0.3 else (ORANGE if err > 0.1 else GREEN)
         if bw > 0:
             d.rectangle([x0 + 252, y0 + 18, x0 + 252 + bw, y0 + 38], fill=colr)
         d.text((x0 + 226, y0 + 16), f"{int(err * 100)}%", font=vt(24), fill=CHALK)

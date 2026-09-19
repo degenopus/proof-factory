@@ -1,0 +1,12 @@
+{
+  "name": "proof-factory",
+  "version": "0.1.0",
+  "private": true,
+  "description": "PROOF FACTORY — индивеб-песочница агентов-математиков",
+  "scripts": {
+    "dev": "vite --host"
+  },
+  "devDependencies": {
+    "vite": "^5.4.0"
+  }
+}

@@ -1,0 +1,991 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PROOF FACTORY ✶ the little math-agent lab</title>
+<meta name="description" content="A cozy little lab where pocket math agents race to prove things. Bet on them. Catch their lies.">
+<meta property="og:title" content="PROOF FACTORY ✶ the little math-agent lab">
+<meta property="og:description" content="Five math agents. One is wrong on purpose. Bet on them. Check their proofs. Trust no one.">
+<meta property="og:url" content="https://prooffactory.icu/">
+<meta property="og:type" content="website">
+<meta property="og:image" content="https://prooffactory.icu/brand/out/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" type="image/png" href="brand/out/favicon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=VT323&family=Press+Start+2P&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#f6edd8;         /* cream paper */
+  --paper2:#efe3c8;
+  --ink:#2b2440;           /* deep purple ink */
+  --board:#241f3d;         /* chalkboard */
+  --chalk:#f2ecff;
+  --pink:#ff9ecf;
+  --blue:#9fd0ff;
+  --green:#a9e5a1;
+  --yellow:#ffe28a;
+  --lilac:#cfb3ff;
+  --red:#ff6b6b;
+  --orange:#ffb36b;
+  --grey:#8b84a3;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scrollbar-color:var(--ink) var(--paper2)}
+body{
+  background:var(--paper);
+  color:var(--ink);
+  font-family:'VT323',monospace;
+  font-size:20px;
+  line-height:1.45;
+  min-height:100vh;
+  /* dithered paper tiling */
+  background-image:
+    repeating-conic-gradient(var(--paper2) 0% 25%, var(--paper) 0% 50%),
+    radial-gradient(rgba(43,36,64,.05) 1px, transparent 1px);
+  background-size:4px 4px, 6px 6px;
+}
+h1,h2,h3,.px{font-family:'Press Start 2P',monospace}
+.silk{font-family:'Silkscreen',monospace}
+a{color:#4a3aff}
+button{font-family:'VT323',monospace;font-size:20px;cursor:pointer;color:var(--ink)}
+::selection{background:var(--yellow);color:var(--ink)}
+
+/* sticker look: hard offset shadow, no blur */
+.sticker{
+  border:3px solid var(--ink);
+  box-shadow:5px 5px 0 var(--ink);
+  background:#fff;
+}
+.panel{
+  border:3px solid var(--ink);
+  box-shadow:5px 5px 0 var(--ink);
+  padding:14px;
+  background:#fff;
+}
+.panel h2{font-size:11px;margin-bottom:12px;letter-spacing:1px}
+
+/* ============ SPLASH ============ */
+#splash{
+  position:fixed;inset:0;z-index:100;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;text-align:center;gap:24px;
+  padding:20px;
+  background:
+    radial-gradient(rgba(43,36,64,.06) 1px, transparent 1px),
+    linear-gradient(180deg,var(--paper) 0%,var(--paper2) 100%);
+  background-size:8px 8px,100% 100%;
+}
+#splash .logo{
+  font-family:'Press Start 2P',monospace;font-size:clamp(18px,4.2vw,40px);
+  color:var(--ink);letter-spacing:2px;line-height:1.7;
+  text-shadow:3px 3px 0 var(--pink), 6px 6px 0 var(--blue), 9px 9px 0 var(--yellow);
+  animation:wob 3s ease-in-out infinite;
+}
+@keyframes wob{0%,100%{transform:rotate(-1deg)}50%{transform:rotate(1deg)}}
+#splash .sub{color:var(--ink);font-size:22px;max-width:620px}
+#splash .warn{
+  color:var(--ink);font-size:18px;max-width:560px;
+  border:3px dashed var(--ink);padding:10px 16px;background:var(--yellow);
+  box-shadow:4px 4px 0 var(--ink);transform:rotate(-1.5deg);
+}
+.blink{animation:blink 1.1s steps(2) infinite}
+@keyframes blink{50%{opacity:0}}
+.bigbtn{
+  font-family:'Press Start 2P',monospace;font-size:13px;padding:16px 26px;
+  background:var(--green);border:3px solid var(--ink);
+  box-shadow:5px 5px 0 var(--ink);text-transform:uppercase;color:var(--ink);
+}
+.bigbtn:hover{background:var(--pink);transform:translate(-2px,-2px);box-shadow:7px 7px 0 var(--ink)}
+.bigbtn:active{transform:translate(4px,4px);box-shadow:1px 1px 0 var(--ink)}
+.ghostbtn{
+  background:#fff;border:3px solid var(--ink);padding:8px 16px;
+  box-shadow:4px 4px 0 var(--ink);color:var(--ink);
+}
+.ghostbtn:hover{background:var(--yellow)}
+.ghostbtn:disabled{opacity:.4;cursor:not-allowed;box-shadow:2px 2px 0 var(--ink)}
+#splash .foot{position:absolute;bottom:14px;color:var(--grey);font-size:17px}
+
+/* ============ LAYOUT ============ */
+#lab{display:none;max-width:1180px;margin:0 auto;padding:16px 16px 70px}
+header.top{
+  display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;
+  background:var(--pink);padding:12px 16px;
+}
+header.top .brand{font-family:'Press Start 2P',monospace;font-size:13px}
+.stat{border:3px solid var(--ink);padding:3px 12px;background:#fff;box-shadow:3px 3px 0 var(--ink)}
+.stat b{color:#4a3aff}
+.statusline{
+  border:3px solid var(--ink);border-top:none;background:var(--ink);color:var(--yellow);
+  padding:4px 12px;font-size:18px;overflow:hidden;white-space:nowrap;
+}
+.statusline marquee{vertical-align:middle}
+
+.grid{display:grid;grid-template-columns:1.35fr 1fr;gap:18px;margin-top:18px}
+@media(max-width:900px){.grid{grid-template-columns:1fr}}
+
+/* blackboard kept as the ONE dark element */
+#boardwrap{background:var(--board);border:3px solid var(--ink);box-shadow:5px 5px 0 var(--ink);padding:18px;color:var(--chalk);font-size:21px;min-height:300px}
+#boardwrap .btitle{color:var(--yellow);font-size:17px;letter-spacing:2px;margin-bottom:8px}
+#boardwrap .problem{font-size:26px;color:#fff;margin-bottom:12px;text-shadow:0 0 6px rgba(255,255,255,.25)}
+#boardwrap .steps{white-space:pre-wrap;color:var(--chalk)}
+#boardwrap .steps .hint{color:var(--blue)}
+#boardwrap .verdict{margin-top:10px;font-size:20px}
+#boardwrap .stamp{
+  display:inline-block;border:3px solid var(--red);color:var(--red);background:rgba(0,0,0,.25);
+  font-family:'Press Start 2P',monospace;font-size:11px;padding:8px 12px;
+  transform:rotate(-6deg);margin-top:10px;
+}
+#boardwrap .stamp.ok{border-color:var(--green);color:var(--green)}
+
+/* agents: sticker sheet */
+#agents{display:flex;flex-direction:column;gap:14px}
+.agent{
+  display:grid;grid-template-columns:60px 1fr;gap:12px;
+  border:3px solid var(--ink);padding:10px;position:relative;cursor:pointer;
+  box-shadow:4px 4px 0 var(--ink);
+  transition:transform .08s;
+}
+.agent:hover{transform:translate(-1px,-1px)}
+.agent .name{font-size:19px}
+.agent .tag{font-size:15px;color:#5a5372}
+.agent .mood{font-size:16px;color:#4a3aff;min-height:20px}
+.agent .work{
+  background:#fff;border:3px solid var(--ink);padding:6px 8px;height:88px;overflow-y:auto;
+  font-size:16px;color:var(--ink);white-space:pre-wrap;word-break:break-word;
+}
+.agent canvas{image-rendering:pixelated;border:3px solid var(--ink);background:#fff}
+.agent .betmark{
+  position:absolute;top:-12px;right:-8px;background:var(--yellow);color:var(--ink);
+  font-size:15px;padding:2px 10px;border:3px solid var(--ink);box-shadow:2px 2px 0 var(--ink);
+  transform:rotate(4deg);display:none;
+}
+.agent.betted .betmark{display:block}
+
+/* control deck */
+#controls{margin-top:18px;background:var(--blue)}
+#controls .row{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
+.seg{display:flex;border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink)}
+.seg button{background:#fff;border:none;padding:6px 14px;border-right:3px solid var(--ink);color:var(--ink)}
+.seg button:last-child{border-right:none}
+.seg button.sel{background:var(--ink);color:var(--yellow)}
+#actionbtns{display:none;flex-wrap:wrap;gap:10px}
+#result{display:none;margin-top:12px;border:3px dashed var(--ink);padding:12px;background:var(--yellow);font-size:20px;color:var(--ink)}
+.log{max-height:150px;overflow-y:auto;font-size:16px;color:#5a5372;margin-top:10px;border-top:3px dotted var(--ink);padding-top:8px}
+.log div b{color:#4a3aff}
+
+/* dividers */
+.divider{
+  text-align:center;font-size:22px;letter-spacing:6px;color:var(--ink);
+  margin:30px 0 18px;
+}
+
+/* lower sections */
+section.below{margin-top:10px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:900px){.cols{grid-template-columns:1fr}}
+.gb-panel{background:var(--green)}
+.notes-panel{background:var(--lilac)}
+#guestbook .msg{border-bottom:3px dotted var(--ink);padding:6px 0}
+#guestbook .msg .who{color:#4a3aff;font-size:17px}
+#guestbook form{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+#guestbook input,#guestbook textarea{
+  background:#fff;border:3px solid var(--ink);color:var(--ink);
+  font-family:'VT323',monospace;font-size:18px;padding:6px 8px;box-shadow:3px 3px 0 var(--ink);
+}
+#guestbook input{width:180px}
+#guestbook textarea{flex:1;min-width:220px;resize:vertical}
+.notes li{list-style:none;margin-bottom:8px;font-size:18px}
+.notes li b{color:#4a3aff}
+#badgebox{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap;margin-top:8px}
+#badgebox textarea{background:#fff;border:3px solid var(--ink);color:#5a5372;font-family:monospace;font-size:12px;width:340px;height:70px;padding:6px;box-shadow:3px 3px 0 var(--ink)}
+.btnrow{display:flex;gap:12px;flex-wrap:wrap;margin-top:14px}
+.fakebtn{
+  width:88px;height:31px;border:2px solid var(--ink);box-shadow:2px 2px 0 var(--ink);
+  display:flex;align-items:center;justify-content:center;font-family:'Silkscreen',monospace;
+  font-size:8px;text-align:center;line-height:1.2;background:#fff;padding:1px 3px;
+}
+footer{
+  margin-top:30px;border-top:3px dotted var(--ink);padding-top:14px;
+  color:var(--grey);font-size:17px;text-align:center;
+}
+.toast{
+  position:fixed;bottom:18px;left:50%;transform:translateX(-50%);
+  background:var(--ink);color:var(--yellow);border:3px solid var(--ink);
+  box-shadow:5px 5px 0 rgba(0,0,0,.35);padding:10px 20px;font-size:19px;z-index:500;
+  display:none;max-width:90vw;text-align:center;
+}
+</style>
+</head>
+<body>
+
+<!-- ================= SPLASH ================= -->
+<div id="splash">
+  <div class="logo">PROOF<br>FACTORY</div>
+  <div class="sub">a cozy little research station where pocket math-agents live in the basement.<br>you are the SCIENCE DIRECTOR. bet on them. check their proofs. trust no one.</div>
+  <button class="bigbtn" id="enterBtn">▶ ENTER ON A GUEST PASS</button>
+  <button class="ghostbtn" id="walletBtn">⬡ connect wallet (lab pass)</button>
+  <div class="warn"><span class="blink">★</span> WARNING: not optimized for a single machine. agents sometimes lie. that's not a bug, that's the philosophy. <span class="blink">★</span></div>
+  <div class="foot">✶ est. 2026 ✶ 88×31 or die ✶ best viewed at 800×600 ✶</div>
+</div>
+
+<!-- ================= LAB ================= -->
+<div id="lab">
+  <header class="top">
+    <div class="brand">∎ PROOF FACTORY</div>
+    <div class="stat">CREDITS: <b id="credits">100</b></div>
+    <div class="stat">REP: <b id="rep">0</b></div>
+    <div class="stat">PASS: <b id="pass">GUEST</b></div>
+    <button class="ghostbtn" id="soundBtn" style="padding:4px 12px">🔇 sound: OFF</button>
+  </header>
+  <div class="statusline">
+    <marquee scrollamount="3" id="ticker">✶ WELCOME TO THE FACTORY ✶ AGENTS PROVE THE UNPROVABLE ✶ BETS CLOSE AT START ✶ GRUNT-7'S KETTLE IS BOILING AGAIN ✶ DO NOT ASK ABOUT THE HOLD ✶</marquee>
+  </div>
+
+  <div class="grid">
+    <div>
+      <div class="panel" style="background:#fff">
+        <h2 style="color:#4a3aff">// THE TASK BOARD</h2>
+        <div id="boardwrap">
+          <div class="btitle" id="btitle">WAITING FOR A TASK…</div>
+          <div class="problem" id="bproblem">— place a bet and start the round —</div>
+          <div class="steps" id="bsteps"></div>
+          <div class="verdict" id="bverdict"></div>
+        </div>
+      </div>
+      <div class="panel" id="controls" style="margin-top:18px">
+        <h2 style="color:#4a3aff">// DIRECTOR'S DECK</h2>
+        <div class="row" id="betrow">
+          <span>STAKE:</span>
+          <div class="seg" id="stakeSeg">
+            <button data-v="10">10</button><button data-v="25">25</button><button data-v="50">50</button>
+          </div>
+          <span>DIFFICULTY:</span>
+          <div class="seg" id="diffSeg">
+            <button data-v="1" class="sel">I ×1</button><button data-v="2">II ×2</button><button data-v="3">III ×3</button>
+          </div>
+          <span style="color:#4a3aff" id="betHint">pick an agent →</span>
+        </div>
+        <div class="row">
+          <button class="bigbtn" id="startBtn" disabled>START ROUND</button>
+          <button class="ghostbtn" id="grantBtn" style="display:none">📠 request grant (+25)</button>
+        </div>
+        <div class="row" id="actionbtns">
+          <button class="ghostbtn" id="coffeeBtn">☕ coffee for my agent (−5)</button>
+          <button class="ghostbtn" id="sabotBtn">🔌 sabotage the leader (−10)</button>
+          <button class="ghostbtn" id="hintBtn">💡 hint (−8)</button>
+        </div>
+        <div id="result"></div>
+        <div class="log" id="roundlog"></div>
+      </div>
+    </div>
+
+    <div class="panel" style="background:var(--pink)">
+      <h2 style="color:var(--ink)">// BASEMENT AGENTS</h2>
+      <div id="agents"></div>
+    </div>
+  </div>
+
+  <div class="divider">✶ ✶ ✶ ★ ✶ ✶ ✶</div>
+
+  <section class="below">
+    <div class="cols">
+      <div class="panel gb-panel">
+        <h2 style="color:var(--ink)">✎ SIGN THE ENGINEER'S LOG</h2>
+        <div id="guestbook"></div>
+        <form id="gbForm">
+          <input id="gbName" placeholder="callsign" maxlength="24">
+          <textarea id="gbText" placeholder="dear log, today the agents…" maxlength="240" rows="2"></textarea>
+          <button class="ghostbtn" type="submit">sign it</button>
+        </form>
+      </div>
+      <div class="panel notes-panel">
+        <h2 style="color:var(--ink)">// LAB NOTES (changeblog)</h2>
+        <ul class="notes">
+          <li><b>09.09.2026</b> — factory booted. agents asked us not to tell you about the hold.</li>
+          <li><b>10.09.2026</b> — XOR-13 mixed everything up again. we kept him. he's funny.</li>
+          <li><b>11.09.2026</b> — betting added. directors now go broke faster.</li>
+          <li><b>12.09.2026</b> — GRUNT-7's kettle made an official sabotage target.</li>
+        </ul>
+        <h2 style="color:var(--ink);margin-top:18px">// YOUR 88×31 BADGE</h2>
+        <div id="badgebox">
+          <canvas id="badge" width="88" height="31" style="image-rendering:pixelated;border:3px solid var(--ink);box-shadow:3px 3px 0 var(--ink)"></canvas>
+          <textarea id="badgeCode" readonly></textarea>
+        </div>
+        <div class="btnrow">
+          <div class="fakebtn">best viewed at 800×600</div>
+          <div class="fakebtn" style="background:var(--yellow)">dirtier than 99%</div>
+          <div class="fakebtn" style="background:var(--green)">powered by coffee</div>
+          <div class="fakebtn" style="background:var(--pink)">under construction</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div>you are visitor № <b id="visits" style="color:#4a3aff">…</b> ✶ researchers in the lab right now: <b id="online" style="color:#4a3aff">…</b> ✶</div>
+    <div>last updated: 12.09.2026 ✶ webmaster: GÖDEL-9000 (do not ask) ✶ <span style="color:var(--ink)">there's nothing at the bottom of this page. really.</span></div>
+    <div style="margin-top:8px"><a href="#" id="konamiHint" style="color:var(--grey)">↑↑↓↓←→←→BA</a></div>
+  </footer>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+"use strict";
+/* ================================================================
+   PROOF FACTORY — math-agent sandbox engine
+   ================================================================ */
+const $=s=>document.querySelector(s);
+const rnd=(a,b)=>Math.floor(Math.random()*(b-a+1))+a;
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const fmt=n=>n<0?`(${n})`:`${n}`;
+
+/* ---------- state ---------- */
+const DEF={credits:100,rep:0,wallet:null,brute:false,gb:null,bets:{},rounds:0,wins:0};
+let S;
+try{S=Object.assign({},DEF,JSON.parse(localStorage.getItem("pf_state_v2")||"{}"));}catch(e){S=Object.assign({},DEF);}
+function save(){try{localStorage.setItem("pf_state_v2",JSON.stringify(S));}catch(e){}}
+if(!Array.isArray(S.gb)){
+  S.gb=[
+    {n:"GRUNT-7",t:"first. coffee ran out back in march. still working though."},
+    {n:"SYLPH-π",t:"if you're reading this — the integral incident was NOT my fault."},
+    {n:"director K.",t:"stop betting on XOR-13. he does NOT know what he's doing."},
+    {n:"guest-8841",t:"wandered in by accident. stayed 4 hours. great factory."}
+  ];
+}
+
+/* ---------- sound (WebAudio, no assets) ---------- */
+let AC=null,ambient=null;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}if(AC&&AC.state==="suspended")AC.resume();return AC;}
+function blip(f,dur,g,type){
+  if(!S.sound)return;const c=ac();if(!c)return;
+  const o=c.createOscillator(),v=c.createGain();
+  o.type=type||"square";o.frequency.value=f;
+  v.gain.setValueAtTime(g||0.04,c.currentTime);
+  v.gain.exponentialRampToValueAtTime(0.0001,c.currentTime+(dur||0.05));
+  o.connect(v).connect(c.destination);o.start();o.stop(c.currentTime+(dur||0.05)+0.02);
+}
+const typeSnd=()=>blip(rnd(600,900),0.025,0.018);
+function startAmbient(){
+  if(!S.sound||ambient)return;const c=ac();if(!c)return;
+  const g=c.createGain();g.gain.value=0.015;
+  const f=c.createBiquadFilter();f.type="lowpass";f.frequency.value=220;
+  const o1=c.createOscillator(),o2=c.createOscillator();
+  o1.type="sawtooth";o1.frequency.value=55;
+  o2.type="sawtooth";o2.frequency.value=55.7;
+  o1.connect(f);o2.connect(f);f.connect(g).connect(c.destination);
+  o1.start();o2.start();ambient={o1,o2,g};
+}
+function stopAmbient(){if(ambient){try{ambient.o1.stop();ambient.o2.stop();}catch(e){}ambient=null;}}
+
+/* ---------- toasts & log ---------- */
+let toastT=null;
+function toast(msg,ms){
+  const t=$("#toast");t.textContent=msg;t.style.display="block";
+  clearTimeout(toastT);toastT=setTimeout(()=>t.style.display="none",ms||2600);
+}
+function log(html){
+  const el=$("#roundlog"),d=document.createElement("div");
+  d.innerHTML=`<b>[${new Date().toLocaleTimeString("en-GB")}]</b> ${html}`;
+  el.prepend(d);while(el.children.length>40)el.lastChild.remove();
+}
+
+/* ================================================================
+   TASK GENERATORS — every task ships a step-by-step reference proof
+   ================================================================ */
+const GENS=[
+
+function genQuadratic(){
+  let a,r1,r2,b,c,D;
+  do{a=pick([1,1,1,2]);r1=rnd(-9,9);r2=rnd(-9,9);}while(r1===r2||r1+r2===0||r1*r2===0);
+  b=-a*(r1+r2);c=a*r1*r2;D=b*b-4*a*c;const s=Math.round(Math.sqrt(D));
+  const bs=b<0?"−":"+",cs=c<0?"−":"+";
+  return{title:"QUADRATIC EQUATION",
+    problem:`${fmt(a)}x² ${bs} ${Math.abs(b)}x ${cs} ${Math.abs(c)} = 0   →   solve for x`,
+    steps:[
+      `D = b² − 4ac = ${fmt(b)}² − 4·${fmt(a)}·${fmt(c)} = ${D}`,
+      `√D = ${s}`,
+      `x₁ = (−b + √D)/2a = (${-b} + ${s}) / ${2*a} = ${r1}`,
+      `x₂ = (−b − √D)/2a = (${-b} − ${s}) / ${2*a} = ${r2}`],
+    answer:`x = ${r1} ; x = ${r2}`};
+},
+
+function genLinear(){
+  let a,c,x;do{a=rnd(2,9);c=rnd(2,7);x=rnd(-8,8);}while(a===c||x===0);
+  const d=a*x+rnd(1,9)*(Math.random()<.5?-1:1);
+  const b=d+(c-a)*x;
+  return{title:"LINEAR EQUATION",
+    problem:`${fmt(a)}x ${b<0?"−":"+"} ${Math.abs(b)} = ${fmt(c)}x ${d<0?"−":"+"} ${Math.abs(d)}   →   solve for x`,
+    steps:[
+      `${fmt(a)}x − (${fmt(c)}x) = ${fmt(d)} − (${fmt(b)})`,
+      `${fmt(a-c)}x = ${d-b}`,
+      `x = ${d-b} / ${fmt(a-c)} = ${x}`],
+    answer:`x = ${x}`};
+},
+
+function genDerivative(){
+  const a=pick([1,2,3]),b=rnd(-6,6),c=rnd(-9,9),d=rnd(-5,5);
+  const t1=`${fmt(a)}x³`,t2=b===0?"":` ${b<0?"−":"+"} ${Math.abs(b)}x²`,
+        t3=c===0?"":` ${c<0?"−":"+"} ${Math.abs(c)}x`,t4=d===0?"":` ${d<0?"−":"+"} ${Math.abs(d)}`;
+  const s1=`${fmt(3*a)}x²`,s2=b===0?"":` ${2*b<0?"−":"+"} ${Math.abs(2*b)}x`,s3=c===0?"":` ${c<0?"−":"+"} ${Math.abs(c)}`;
+  return{title:"DERIVATIVE",
+    problem:`d/dx [ ${t1}${t2}${t3}${t4} ] = ?`,
+    steps:[
+      `(xⁿ)′ = n·xⁿ⁻¹ — apply to every term`,
+      `d/dx ${t1} = ${s1}`,
+      `all together: ${s1}${s2}${s3}`],
+    answer:s1+s2+s3};
+},
+
+function genCollatz(){
+  const n=rnd(17,45);let m=n,seq=[m],steps=0;
+  while(m!==1){m=m%2===0?m/2:3*m+1;seq.push(m);steps++;}
+  const shown=seq.slice(0,6).join(" → ")+(seq.length>7?" → … → ":" → ")+seq[seq.length-1];
+  return{title:"COLLATZ SEQUENCE",
+    problem:`n = ${n}. how many steps to reach 1?`,
+    steps:[
+      `loop: even → /2, odd → 3n+1`,
+      `path: ${shown}`,
+      `steps taken: ${steps}`],
+    answer:`${steps} steps`};
+},
+
+function genGCD(){
+  const a=rnd(24,240),b=rnd(18,180);let x=a,y=b;const rows=[];
+  while(y){const q=Math.floor(x/y),r=x%y;rows.push(`${x} = ${q}·${y} + ${r}`);x=y;y=r;}
+  return{title:"EUCLID'S ALGORITHM (GCD)",
+    problem:`GCD(${a}, ${b}) = ?`,
+    steps:[...rows,`remainder 0 ⇒ GCD = ${x}`],
+    answer:`GCD = ${x}`};
+},
+
+function genPrime(){
+  const n=rnd(101,499);
+  const isP=n2=>{if(n2<2)return false;for(let i=2;i*i<=n2;i++)if(n2%i===0)return false;return true;};
+  if(isP(n)){
+    const r=Math.floor(Math.sqrt(n));
+    return{title:"PRIMALITY CHECK",
+      problem:`is ${n} a prime number?`,
+      steps:[`√${n} ≈ ${r}`,`testing divisors 2…${r}: none divide ${n}`,`conclusion: ${n} is PRIME`],
+      answer:`yes, ${n} is prime`};
+  }
+  let f=2;while(n%f)f++;
+  return{title:"PRIMALITY CHECK",
+    problem:`is ${n} a prime number?`,
+    steps:[`√${n} ≈ ${Math.floor(Math.sqrt(n))}`,`trying small divisors…`,`${n} = ${f} · ${n/f} — divisible by ${f}`],
+    answer:`no, ${n} = ${f}·${n/f}`};
+},
+
+function genArith(){
+  const a=rnd(6,19),b=rnd(4,13),c=rnd(3,11),d=c*rnd(2,7),e=rnd(10,60);
+  const res=a*b-d/c+e;
+  return{title:"ARITHMETIC COMBO",
+    problem:`${a}·${b} − ${d}/${c} + ${e} = ?`,
+    steps:[
+      `${a}·${b} = ${a*b}`,
+      `${d}/${c} = ${d/c}`,
+      `${a*b} − ${d/c} + ${e} = ${res}`],
+    answer:`${res}`};
+},
+
+function genDiophantine(){
+  const x=rnd(5,40),y=rnd(1,30),s=x+y,diff=x-y;
+  return{title:"DIOPHANTINE SYSTEM",
+    problem:`x + y = ${s} ;  x − y = ${diff}   →   find x and y`,
+    steps:[
+      `add the equations: 2x = ${s} + (${fmt(diff)}) = ${s+diff}`,
+      `x = ${(s+diff)/2}`,
+      `y = ${s} − x = ${s-x}`],
+    answer:`x = ${x} ; y = ${y}`};
+}
+];
+
+function genTask(diff){
+  let t;try{t=pick(GENS)();}catch(e){t=GENS[0]();}
+  if(diff>=2){t.problem="⚠ "+t.problem;}
+  return t;
+}
+
+/* a broken proof for the approval minigame */
+function makeFlawed(task){
+  let bad;
+  const m=task.answer.match(/-?\d+/g);
+  if(m&&m.length){
+    const victim=Number(m[m.length-1])+pick([1,-1,2,-2,10,-10]);
+    bad=task.answer.replace(/-?\d+(?=[^\d]*$)/,String(victim));
+    if(bad===task.answer)bad=task.answer+" + 1 = ???";
+  }else bad=task.answer+" (probably)";
+  return{steps:[...task.steps.slice(0,-1),`all together: ${bad}`],answer:bad};
+}
+
+/* ================================================================
+   AGENTS
+   ================================================================ */
+const AGENTS=[
+ {id:"XOR", name:"XOR-13", tag:"intern", color:"#7cfc00", bg:"#d9f7c4", speed:30, err:.35,
+  hello:["ok. so. right. hold on.", "i'm ready. probably.", "count again? fine."],
+  stuck:["i don't know where i am", "what if x is y??", "gonna get coffee… i mean count"]},
+ {id:"GRUNT", name:"GRUNT-7", tag:"veteran", color:"#d98a00", bg:"#ffe1a8", speed:24, err:.14,
+  hello:["let's go.", "no poetry.", "hm."],
+  stuck:["…", "kettle's boiling. waiting.", "not today."]},
+ {id:"SYLPH", name:"SYLPH-π", tag:"elegance", color:"#e05299", bg:"#ffd0e8", speed:18, err:.09,
+  hello:["a pretty one. starting.", "allow me to write it beautifully.", "ah, what symmetry."],
+  stuck:["something is dishonest here…", "beauty takes time.", "one moment. catching the harmony."]},
+ {id:"GODEL", name:"GÖDEL-9000", tag:"professor", color:"#2b6fd9", bg:"#c4e0ff", speed:13, err:.05,
+  hello:["trivial. watch.", "i'll prove it in two lines.", "i covered this in my 3rd theorem."],
+  stuck:["interesting. first time in 40 years.", "the proof is incomplete… in principle, all of them are."]},
+ {id:"BRUTE", name:"BRUTE-666", tag:"brute force", color:"#d92b2b", bg:"#ffc4c4", speed:9, err:.02, locked:true,
+  hello:["BRUTE FORCE.", "I ENUMERATE EVERYTHING.", "DEATH TO OPTIMIZATION."],
+  stuck:["ENUMERATING FURTHER.", "…"]}
+];
+
+/* ---------- pixel faces ---------- */
+function drawFace(cv,agent,mood){
+  const x=cv.getContext("2d"),W=cv.width,H=cv.height,u=Math.floor(W/14);
+  x.fillStyle="#fff";x.fillRect(0,0,W,H);
+  const blink=(Math.floor(Date.now()/1800)%3===0)&&mood==="idle";
+  const c=agent.color;
+  x.fillStyle=c;
+  x.fillRect(3*u,3*u,8*u,7*u);
+  x.fillStyle="rgba(255,255,255,.35)";x.fillRect(3*u,3*u,8*u,2*u);
+  x.fillStyle="#2b2440";x.fillRect(3*u,3*u,8*u,u);
+  x.fillStyle="#fff";x.fillRect(3*u,3*u,2*u,u);
+  x.fillStyle="#2b2440";
+  if(mood==="error"||agent.id==="BRUTE"){
+    x.fillStyle=agent.id==="BRUTE"?"#d92b2b":"#2b2440";
+    x.fillRect(4*u,5*u,2*u,2*u);x.fillRect(8*u,5*u,2*u,2*u);
+    x.fillStyle="#fff";x.fillRect(4*u,5*u,u,u);x.fillRect(8*u,5*u,u,u);
+  }else if(blink){
+    x.fillRect(4*u,6*u,2*u,u);x.fillRect(8*u,6*u,2*u,u);
+  }else{
+    x.fillRect(4*u,5*u,2*u,2*u);x.fillRect(8*u,5*u,2*u,2*u);
+  }
+  x.fillStyle="#2b2440";
+  if(mood==="typing"){x.fillRect(5*u,8*u,4*u,u);}
+  else if(mood==="error"){x.fillRect(5*u,8*u,4*u,2*u);x.fillStyle="#fff";x.fillRect(6*u,8*u,2*u,u);}
+  else if(agent.id==="BRUTE"){x.fillRect(4*u,8*u,6*u,2*u);x.fillStyle="#d92b2b";x.fillRect(5*u,8*u,4*u,u);}
+  else{x.fillRect(5*u,8*u,4*u,u);x.fillStyle="#fff";x.fillRect(5*u,8*u,4*u,Math.floor(u/2));}
+}
+function startBlinkLoop(cv,agent,getMood){
+  const loop=()=>{if(!cv.isConnected)return;drawFace(cv,agent,getMood());setTimeout(loop,220);};
+  loop();
+}
+</script>
+<script>
+"use strict";
+/* ================================================================
+   AGENT RACE — token queues, char-by-char typing
+   ================================================================ */
+const race={active:false,phase:"bet",bet:null,stake:10,diff:1,task:null,resolved:false,
+  states:[],hintIdx:0,used:{coffee:false,sabot:false,hints:0}};
+const moods={};
+
+function visibleAgents(){return AGENTS.filter(a=>!a.locked||S.brute);}
+
+function renderAgents(){
+  const box=$("#agents");box.innerHTML="";
+  visibleAgents().forEach(a=>{
+    moods[a.id]="idle";
+    const d=document.createElement("div");
+    d.className="agent";d.id="agent-"+a.id;
+    d.style.background=a.bg;
+    d.innerHTML=`
+      <div><canvas width="56" height="56"></canvas></div>
+      <div>
+        <div><span class="name silk" style="color:${a.color==='#7cfc00'?'#3f8f00':a.color}">${a.name}</span>
+        <span class="tag">// ${a.tag}</span>
+        <span class="tag" id="mem-${a.id}"></span></div>
+        <div class="mood" id="mood-${a.id}"></div>
+        <div class="work" id="work-${a.id}"></div>
+      </div>
+      <div class="betmark">BET ✖${race.diff}</div>`;
+    box.appendChild(d);
+    const cv=d.querySelector("canvas");
+    drawFace(cv,a,"idle");
+    startBlinkLoop(cv,a,()=>moods[a.id]);
+    d.onclick=()=>{
+      if(race.phase!=="bet"){toast("bets are closed — round is running");return;}
+      race.bet=a.id;
+      document.querySelectorAll(".agent").forEach(el=>el.classList.remove("betted"));
+      d.classList.add("betted");
+      const streak=S.bets[a.id]||0;
+      $("#mood-"+a.id).textContent = streak>=3 ? pick(["«me again?? fine. used to it.»","«just bet. i got this.»"]) : pick(a.hello);
+      $("#betHint").textContent=`bet on ${a.name}`;
+      $("#startBtn").disabled = S.credits<race.stake;
+      blip(500,0.06,0.05);
+    };
+  });
+  refreshStats();
+}
+
+function refreshStats(){
+  $("#credits").textContent=S.credits;
+  $("#rep").textContent=S.rep;
+  Object.keys(S.bets).forEach(id=>{const el=$("#mem-"+id);if(el)el.textContent=` [bets: ${S.bets[id]}]`;});
+  $("#grantBtn").style.display = S.credits<10 ? "inline-block" : "none";
+  drawBadge();
+}
+
+/* ---------- behavior queues ---------- */
+function buildQueue(agent,mode,task,flawed){
+  const q=[];
+  q.push({s:"» "+pick(agent.hello)});q.push({ms:agent.speed*8});
+  const src = mode==="flawed" ? flawed.steps : task.steps;
+  const n = mode==="stuck" ? Math.max(2,Math.floor(src.length*0.55)) : src.length;
+  for(let i=0;i<n;i++){q.push({s:src[i]});q.push({ms:agent.speed*rnd(5,13)});}
+  if(mode==="stuck"){
+    q.push({ms:800});
+    for(let k=0;k<3;k++){
+      q.push({s:"? "+pick(agent.stuck)});q.push({ms:1500});q.push({erase:60});
+    }
+    q.push({s:"…frozen. not responding…"});
+  }else{
+    q.push({ms:agent.speed*6});
+    q.push({s:"ANSWER: "+(mode==="flawed"?flawed.answer:task.answer)});
+  }
+  return q;
+}
+
+function rollModes(){
+  const pOK=[0,.92,.72,.55][race.diff];
+  const modes={};
+  const list=visibleAgents();
+  let anyStuck=false;
+  list.forEach(a=>{
+    const r=Math.random();
+    modes[a.id]= r<pOK ? "correct" : (Math.random()<0.5?"flawed":"stuck");
+    if(modes[a.id]==="stuck")anyStuck=true;
+  });
+  if(!anyStuck){
+    const candidates=list.filter(a=>modes[a.id]!=="correct");
+    const victim=candidates.length?pick(candidates):pick(list);
+    modes[victim.id]="stuck";
+  }
+  return modes;
+}
+
+/* ---------- typewriter ---------- */
+function renderWork(st){
+  const el=$("#work-"+st.agent.id);
+  if(!el)return;
+  el.textContent=st.text;
+  el.scrollTop=el.scrollHeight;
+}
+function stepAgent(st){
+  if(!race.active||st.done)return;
+  const tok=st.q.shift();
+  if(tok===undefined){finishAgent(st);return;}
+  if(tok.ms){st.timer=setTimeout(()=>stepAgent(st),tok.ms);return;}
+  if(tok.erase){st.text=st.text.slice(0,Math.max(0,st.text.length-Math.min(tok.erase,st.text.length)));renderWork(st);st.timer=setTimeout(()=>stepAgent(st),140);return;}
+  if(st.text&&!st.text.endsWith("\n"))st.text+="\n";
+  typeString(st,tok.s,0);
+}
+function typeString(st,s,i){
+  if(!race.active||st.done)return;
+  if(i>=s.length){st.text+="\n";renderWork(st);stepAgent(st);return;}
+  if(Math.random()<st.agent.err*0.10 && s[i]!==" "){
+    const wrong=String.fromCharCode(s.charCodeAt(i)+pick([1,-1,2,-2]));
+    st.text+=wrong;renderWork(st);moods[st.agent.id]="error";
+    st.timer=setTimeout(()=>{
+      st.text=st.text.slice(0,-1);renderWork(st);moods[st.agent.id]="typing";
+      st.timer=setTimeout(()=>typeString(st,s,i),st.iv);
+    },rnd(200,380));
+    return;
+  }
+  st.text+=s[i];renderWork(st);
+  if(i%3===0)typeSnd();
+  st.timer=setTimeout(()=>typeString(st,s,i+1),st.iv*rnd(0.65,1.4));
+}
+function leaderState(){
+  let best=null;
+  race.states.forEach(st=>{
+    if(st.agent.id===race.bet||st.done)return;
+    if(!best||st.text.length>best.text.length)best=st;
+  });
+  return best;
+}
+function finishAgent(st){
+  st.done=true;moods[st.agent.id]="idle";
+  if(!race.resolved){
+    race.resolved=true;
+    setTimeout(()=>openReview(st),700);
+  }else{
+    log(`${st.agent.name} finished later — too late, the protocol is closed.`);
+  }
+}
+
+/* ---------- round flow ---------- */
+function startRound(){
+  if(race.active||!race.bet)return;
+  if(S.credits<race.stake){toast("not enough credits");return;}
+  race.phase="race";
+  S.credits-=race.stake;S.rounds++;S.bets[race.bet]=(S.bets[race.bet]||0)+1;save();
+  race.task=genTask(race.diff);
+  const flawed=makeFlawed(race.task);
+  race.active=true;race.resolved=false;race.hintIdx=0;
+  race.used={coffee:false,sabot:false,hints:0};
+  $("#result").style.display="none";$("#result").innerHTML="";
+  $("#bverdict").innerHTML="";$("#bsteps").innerHTML="";
+  $("#btitle").textContent="// TASK: "+race.task.title+`  [difficulty ${"I".repeat(race.diff)}]`;
+  $("#bproblem").textContent=race.task.problem;
+  $("#startBtn").disabled=true;
+  $("#betrow").style.opacity=.4;
+  $("#actionbtns").style.display="flex";
+  $("#coffeeBtn").disabled=$("#sabotBtn").disabled=$("#hintBtn").disabled=false;
+  const modes=rollModes();
+  race.states=visibleAgents().map(a=>{
+    const st={agent:a,q:buildQueue(a,modes[a.id],race.task,flawed),text:"",iv:a.speed,done:false,timer:null,
+      correct:modes[a.id]==="correct"};
+    const w=$("#work-"+a.id);if(w)w.textContent="";
+    moods[a.id]="typing";
+    $("#mood-"+a.id).textContent = modes[a.id]==="stuck" ? "straining…" : "typing…";
+    setTimeout(()=>stepAgent(st),rnd(300,1400));
+    return st;
+  });
+  log(`round ${S.rounds}: <b>${race.task.title}</b>. stake <b>${race.stake}</b> on <b>${AGENTS.find(a=>a.id===race.bet).name}</b>.`);
+  blip(300,0.1,0.06);blip(450,0.1,0.06);blip(600,0.12,0.06);
+  refreshStats();
+}
+
+/* ---------- director actions ---------- */
+$("#coffeeBtn").onclick=()=>{
+  if(race.used.coffee||race.phase!=="race")return;
+  const st=race.states.find(s=>s.agent.id===race.bet&&!s.done);
+  if(!st){toast("your agent already finished or froze");return;}
+  if(S.credits<5){toast("coffee costs 5 credits");return;}
+  S.credits-=5;st.iv*=0.55;race.used.coffee=true;
+  $("#coffeeBtn").disabled=true;
+  $("#mood-"+race.bet).textContent="coffee!! flying!!";
+  log("☕ you served coffee. agent is 1.8× faster.");
+  toast("☕ coffee kicked in");blip(880,0.08,0.06);refreshStats();
+};
+$("#sabotBtn").onclick=()=>{
+  if(race.used.sabot||race.phase!=="race")return;
+  const st=leaderState();
+  if(!st){toast("nobody to sabotage");return;}
+  if(S.credits<10){toast("sabotage costs 10 credits");return;}
+  S.credits-=10;race.used.sabot=true;
+  $("#sabotBtn").disabled=true;
+  st.q.unshift({s:"!!! someone pulled the plug !!!"},{erase:60},{ms:1300},{ms:1300},{ms:1300});
+  $("#mood-"+st.agent.id).textContent="what the…?";
+  log(`🔌 you unplugged the kettle of <b>${st.agent.name}</b>. mean. effective.`);
+  toast("🔌 sabotage executed");blip(120,0.2,0.08,"sawtooth");refreshStats();
+};
+$("#hintBtn").onclick=()=>{
+  if(race.used.hints>=3||race.phase!=="race")return;
+  if(S.credits<8){toast("a hint costs 8 credits");return;}
+  S.credits-=8;race.used.hints++;
+  if(race.used.hints>=3)$("#hintBtn").disabled=true;
+  const line=race.task.steps[race.hintIdx++];
+  if(line){
+    const d=document.createElement("div");d.className="hint";d.textContent="💡 "+line;
+    $("#bsteps").appendChild(d);
+    log(`💡 hint: ${line}`);
+  }
+  blip(700,0.08,0.05);refreshStats();
+};
+
+/* ---------- proof approval minigame ---------- */
+function openReview(winner){
+  race.phase="review";
+  $("#actionbtns").style.display="none";
+  const lines=winner.text.split("\n").filter(l=>l.trim()).slice(-4).join("\n");
+  $("#bverdict").innerHTML=
+    `<div style="margin-top:8px">first to finish: <b style="color:${winner.agent.color==='#7cfc00'?'#7cfc00':winner.agent.color}">${winner.agent.name}</b>:</div>`+
+    `<pre style="white-space:pre-wrap;color:#d9d2f2;font-size:18px;margin-top:4px">${lines.replace(/</g,"&lt;")}</pre>`+
+    `<div class="stamp" id="stamp">UNDER REVIEW</div>`;
+  const r=$("#result");r.style.display="block";
+  r.innerHTML=`<span>CHIEF, YOUR CALL:</span> is this proof clean?
+    <div style="margin-top:8px;display:flex;gap:10px;flex-wrap:wrap">
+    <button class="bigbtn" id="okBtn">✔ APPROVE</button>
+    <button class="ghostbtn" id="noBtn">✘ REJECT (send back)</button></div>`;
+  $("#okBtn").onclick=()=>resolveReview(true,winner);
+  $("#noBtn").onclick=()=>resolveReview(false,winner);
+  log(`<b>${winner.agent.name}</b> turned a proof in. it's on your desk.`);
+  blip(500,0.1,0.06);
+}
+
+function resolveReview(approved,winner){
+  const mult=race.diff;
+  const betWon = race.bet===winner.agent.id;
+  let msg,win=false;
+  if(winner.correct){
+    if(approved){
+      if(betWon){const gain=race.stake*mult;S.credits+=gain;S.rep+=1;S.wins++;win=true;
+        msg=`✔ CLEAN PROOF. ${winner.agent.name} delivers. +${gain} credits (stake ×${mult}).`;}
+      else{msg=`✔ the proof was right, but you bet on someone else. stake gone.`;}
+    }else{
+      S.rep-=1;msg=`✘ you rejected a CORRECT proof. ${winner.agent.name} is offended. rep −1.`;}
+  }else{
+    if(approved){
+      S.rep-=2;msg=`✘ ${winner.agent.name} LIED and you signed the forgery. rep −2. stake gone.`;
+      log("the incident log grows fatter.");
+    }else{
+      S.rep+=2;
+      if(betWon){const gain=Math.round(race.stake*mult*0.8);S.credits+=gain;win=true;
+        msg=`✘✔ LIE CAUGHT — and it's YOUR agent. protocol pays half: +${gain} credits, rep +2.`;}
+      else{msg=`✘✔ you caught the lie! but you bet on another agent — stake gone. rep +2.`;}
+    }
+  }
+  save();
+  const stamp=$("#stamp");
+  if(stamp){
+    const goodCall=(approved&&winner.correct)||(!approved&&!winner.correct);
+    stamp.textContent=approved?"APPROVED":"REJECTED";
+    stamp.className="stamp"+(goodCall?" ok":"");
+  }
+  race.states.forEach(st=>{st.done=true;clearTimeout(st.timer);});
+  race.active=false;moods[winner.agent.id]="idle";
+  const r=$("#result");
+  r.innerHTML=`<div>${msg}</div>
+    <div style="margin-top:10px"><button class="bigbtn" id="nextBtn">NEXT ROUND</button></div>`;
+  $("#nextBtn").onclick=nextRound;
+  log(msg);toast(msg,4200);
+  blip(win?900:180,0.15,0.08);if(win)setTimeout(()=>blip(1200,0.15,0.07),160);
+  refreshStats();
+  if(S.wins>0&&S.wins%5===0)toast(`🏆 ${S.wins} wins! the agents are starting to respect you.`,5000);
+}
+
+function nextRound(){
+  race.phase="bet";race.bet=null;
+  document.querySelectorAll(".agent").forEach(el=>el.classList.remove("betted"));
+  $("#betrow").style.opacity=1;
+  $("#startBtn").disabled=S.credits<race.stake;
+  $("#betHint").textContent="pick an agent →";
+  $("#btitle").textContent="WAITING FOR A TASK…";
+  $("#bproblem").textContent="— place a bet and start the round —";
+  $("#bsteps").innerHTML="";$("#bverdict").innerHTML="";
+  $("#result").style.display="none";
+  visibleAgents().forEach(a=>{const w=$("#work-"+a.id);if(w)w.textContent="";moods[a.id]="idle";
+    const m=$("#mood-"+a.id);if(m)m.textContent="";});
+  refreshStats();
+}
+
+/* ---------- stake/difficulty segments ---------- */
+function segWire(id,fn){
+  $(id).querySelectorAll("button").forEach(b=>b.onclick=()=>{
+    $(id).querySelectorAll("button").forEach(x=>x.classList.remove("sel"));
+    b.classList.add("sel");fn(Number(b.dataset.v));blip(440,0.05,0.04);
+  });
+}
+segWire("#stakeSeg",v=>{race.stake=v;
+  document.querySelectorAll(".betmark").forEach(el=>el.textContent="BET ✖"+race.diff);
+  if(race.phase==="bet")$("#startBtn").disabled=!(race.bet&&S.credits>=v);});
+segWire("#diffSeg",v=>{race.diff=v;
+  document.querySelectorAll(".betmark").forEach(el=>el.textContent="BET ✖"+race.diff);});
+$("#startBtn").onclick=startRound;
+$("#grantBtn").onclick=()=>{S.credits+=25;save();refreshStats();toast("📠 grant approved: +25 credits. don't blow it.");log("📠 you requested a grant. accounting sighed.");};
+</script>
+<script>
+"use strict";
+/* ================================================================
+   INDIEWEB LAYER: guestbook, counters, 88×31 badge, secrets
+   ================================================================ */
+
+/* ---------- guestbook ---------- */
+function renderGB(){
+  const box=$("#guestbook");box.innerHTML="";
+  S.gb.slice(0,12).forEach(m=>{
+    const d=document.createElement("div");d.className="msg";
+    d.innerHTML=`<span class="who">${(m.n||"anon").replace(/</g,"&lt;")}</span> — ${(m.t||"").replace(/</g,"&lt;")}`;
+    box.appendChild(d);
+  });
+}
+$("#gbForm").addEventListener("submit",e=>{
+  e.preventDefault();
+  const name=$("#gbName").value.trim()||(S.wallet?S.wallet.slice(0,10):"anon-"+rnd(100,999));
+  const text=$("#gbText").value.trim();
+  if(!text){toast("the log won't take an empty entry");return;}
+  S.gb.unshift({n:name,t:text});S.gb=S.gb.slice(0,30);save();
+  $("#gbName").value="";$("#gbText").value="";
+  renderGB();toast("✎ entry recorded");blip(660,0.08,0.05);
+});
+
+/* ---------- counters ---------- */
+function initCounters(){
+  let v=Number(localStorage.getItem("pf_visits")||"0");
+  try{
+    if(!sessionStorage.getItem("pf_here")){v++;localStorage.setItem("pf_visits",String(v));sessionStorage.setItem("pf_here","1");}
+  }catch(e){v++;}
+  $("#visits").textContent=v;
+  $("#online").textContent=rnd(2,9);
+  setInterval(()=>{$("#online").textContent=rnd(2,9);},9000);
+}
+
+/* ---------- 88×31 badge ---------- */
+function drawBadge(){
+  const cv=$("#badge");if(!cv)return;
+  const x=cv.getContext("2d");
+  x.fillStyle="#2b2440";x.fillRect(0,0,88,31);
+  x.fillStyle="#ff9ecf";x.fillRect(2,2,84,27);
+  x.fillStyle="#fff";x.fillRect(4,4,80,23);
+  x.fillStyle="#2b2440";x.font="bold 9px monospace";x.fillText("PROOF",7,12);
+  x.fillStyle="#4a3aff";x.fillText("FACTORY",7,22);
+  x.fillStyle="#2b2440";x.font="8px monospace";
+  x.fillText(("REP"+S.rep+" W"+S.wins).slice(0,12),7,29);
+  try{$("#badgeCode").value='<a href="PROOF_FACTORY" title="Proof Factory"><img src="'+cv.toDataURL()+'" width="88" height="31" alt="Proof Factory"></a>';}catch(e){}
+}
+
+/* ---------- wallet ---------- */
+$("#walletBtn").addEventListener("click",async()=>{
+  let addr=null;
+  if(window.ethereum){
+    try{
+      const a=await window.ethereum.request({method:"eth_requestAccounts"});
+      if(a&&a[0])addr=a[0];
+    }catch(e){toast("wallet said no. happens.");}
+  }
+  if(!addr){
+    addr="0x"+Array.from({length:36},()=>"0123456789abcdef"[rnd(0,15)]).join("");
+    toast("no web3 found — issued a guest pass with a wax stamp. more authentic anyway.");
+  }
+  S.wallet=addr;save();
+  $("#pass").textContent=addr.slice(0,10)+"…";
+  $("#walletBtn").textContent="⬡ PASS ISSUED";
+  log(`⬡ lab pass issued: <b>${addr.slice(0,14)}…</b>`);
+  blip(520,0.08,0.05);blip(780,0.1,0.05);
+});
+
+/* ---------- sound ---------- */
+$("#soundBtn").onclick=()=>{
+  S.sound=!S.sound;save();
+  $("#soundBtn").textContent=S.sound?"🔊 sound: ON":"🔇 sound: OFF";
+  if(S.sound){ac();startAmbient();blip(600,0.1,0.06);}
+  else stopAmbient();
+};
+
+/* ---------- konami: BRUTE-666 ---------- */
+const KONAMI=["ArrowUp","ArrowUp","ArrowDown","ArrowDown","ArrowLeft","ArrowRight","ArrowLeft","ArrowRight","b","a"];
+let kbuf=[];
+document.addEventListener("keydown",e=>{
+  kbuf.push(e.key.length===1?e.key.toLowerCase():e.key);
+  if(kbuf.length>KONAMI.length)kbuf.shift();
+  if(KONAMI.every((k,i)=>kbuf[i]===k)){
+    kbuf=[];
+    if(!S.brute){
+      S.brute=true;save();
+      toast("⚠ THE HOLD IS OPEN. BRUTE-666 clocks in. enumeration begins immediately.",5000);
+      log("⚠ you found the thing we agreed not to mention. <b>BRUTE-666</b> unlocked.");
+      if($("#lab").style.display!=="none"){renderAgents();nextRound();}
+      blip(100,0.4,0.1,"sawtooth");
+    }else toast("BRUTE-666 is already on shift.");
+  }
+});
+$("#konamiHint").addEventListener("click",e=>{e.preventDefault();toast("↑↑↓↓←→←→BA — try it on your keyboard",3000);});
+
+/* ---------- enter ---------- */
+$("#enterBtn").onclick=()=>{
+  ac();
+  $("#splash").style.display="none";
+  $("#lab").style.display="block";
+  if(S.wallet)$("#pass").textContent=S.wallet.slice(0,10)+"…";
+  if(S.sound){$("#soundBtn").textContent="🔊 sound: ON";startAmbient();}
+  initCounters();renderGB();renderAgents();refreshStats();
+  log("welcome to the Factory, chief. the agents are already nervous.");
+  toast("∎ you entered PROOF FACTORY");
+  blip(392,0.12,0.06);setTimeout(()=>blip(523,0.12,0.06),130);setTimeout(()=>blip(659,0.18,0.06),260);
+  window.scrollTo(0,0);
+};
+</script>
+</body>
+</html>

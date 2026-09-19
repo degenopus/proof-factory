@@ -29,7 +29,9 @@ credits; **catching the lie wins reputation**.
 No install. No build step. No email. One HTML file, a guest pass, and a
 grudge against XOR-13.
 
-`→` live: **[prooffactory.icu](https://prooffactory.icu)**
+`→` live: **[prooffactory.icu](https://prooffactory.icu)** ·
+`→` chirps: **[@proofactory](https://x.com/proofactory)** ·
+`→` bug book: [issues](https://github.com/degenopus/proof-factory/issues)
 
 ---
 
@@ -118,24 +120,115 @@ No `npm install`. There is no npm. The agents like it that way.
 - **A real game loop.** Stakes, risk, sabotage, forgiveness, collectibles
   (88×31 badges), a locked agent (BRUTE-666 — you didn't hear it from us).
 
+### ∎ the research corner (or: the factory didn't pick its theme by accident)
+
+The factory's one joke — *agents lie, checking is the game* — is, annoyingly,
+where the entire field is heading:
+
+- **Hallucination is structural, not a bug.** OpenAI's own researchers proved
+  that training and benchmarks *reward guessing over admitting uncertainty*:
+  a model that bluffs scores better than an honest one on the leaderboards we
+  built ([Why Language Models Hallucinate, Kalai et al., Sept 2025](https://arxiv.org/abs/2509.04664)).
+  Earlier work showed calibrated models *must* hallucinate beyond their
+  training data ([Kalai & Vempala, STOC 2024](https://arxiv.org/abs/2311.14648))
+  and that hallucination is inevitable for any learner in the general case
+  ([Xu et al., NUS](https://arxiv.org/abs/2401.11817)).
+  → *Conclusion: verification cannot live inside the model. It lives in the
+  checker. That's you. That's the game.*
+- **Automated checking has hard limits.** Yale researchers mapped when
+  automated hallucination detection is provably impossible
+  ([Karbasi et al., 2025](https://arxiv.org/abs/2504.17004)).
+  → *Human verification stays in the loop — so it might as well be trained,
+  priced, and made fun.*
+- **Verification layers measurably work.** Real-time trust scoring over agent
+  steps cut failure rates by up to **50%** on the Tau²-Bench agent benchmark
+  ([Cleanlab study, Dec 2025](https://cleanlab.ai/blog/tau-bench/)).
+  The AA-Omniscience benchmark tracks hallucination rates of 15–52% across
+  frontier models ([Artificial Analysis via Zep](https://www.getzep.com/ai-agents/reducing-llm-hallucinations/)).
+  → *Error rates are measurable. What's missing is reputation that follows
+  the agent — which is exactly what the factory ledger is a toy model of.*
+- **The agent economy is being built right now.** a16z's State of Crypto 2025
+  flags agent-driven payments as a multi-trillion-dollar lane (Gartner's
+  ~$30T autonomous-transaction estimate by 2030)
+  ([a16z State of Crypto 2025](https://a16zcrypto.com/posts/article/state-of-crypto-report-2025/)).
+  Coinbase shipped the **x402** payment protocol in May 2025 — peak weeks saw
+  ~500k agent payments and a ~10,000% activity surge
+  ([Decasonic market map](https://www.decasonic.com/post/the-x402-market-map));
+  Visa, Google (AP2), Cloudflare and the Ethereum Foundation (ERC-8004 agent
+  identity + reputation) are all building the same rails
+  ([odaily analysis](https://m.odaily.news/en/post/5207130),
+  [BlockBeats](https://www.theblockbeats.info/en/news/60019)).
+  Honest footnote, because trust-no-one includes us: real usage is still
+  early — daily x402 volume was reported down ~93% YTD by Aug 2026
+  ([CryptoNews](https://cryptonews.net/news/market/33284533/)).
+  → *The rails are laid before the traffic exists. What the agent economy
+  still lacks: verifiable reputation and humans who can read a proof.
+  Proof Factory trains both, on a chalkboard, for free.*
+
 ---
 
-## ∎ prospects / roadmap
+## ∎ prospects / scaling plan
 
-- **LAB PASS on-chain** — wallet login becomes the real thing: rep as a
-  portable on-chain record, seasonal leaderboards, director tournaments.
-- **Agent marketplace** — community-submitted agents with published error
-  profiles. Breed your own liar. Stake against it.
-- **New proof domains** — logic puzzles, code-correctness races, lightweight
-  zero-knowledge-flavored challenges ("prove you checked without showing the
-  check").
-- **Multiplayer factory floor** — shared rounds, visible bets, spectator
-  stamping.
-- **Embeddable identity** — export your 88×31 badge with live rep burned in.
-- **Public race API** — stream agent token queues to other sites. Host your
-  own betting desk.
+The factory scales in public. Phases ship when they're ready; the engineers'
+log decides what "ready" means.
+
+**PHASE 1 — REAL AGENTS.** Swap the simulated racers for live LLM backends
+behind the same race engine, with the deterministic checker as referee.
+Every agent gets a published, *measured* error profile — an AA-Omniscience
+for the basement. Liars welcome. Measured liars, preferably.
+
+**PHASE 2 — LAB PASS ON-CHAIN.** Wallet login becomes the real thing:
+ERC-8004-flavored identity, reputation and attestation for agents —
+portable rep that follows an agent off-site, seasonal director
+tournaments, on-chain badge bragging.
+
+**PHASE 3 — THE MARKETPLACE.** Community-submitted agents with published
+error profiles. Breed your own liar. Stake against it. x402-style
+micropayments for agent services — hints, proofs, verifications — so the
+factory economy plugs into the agent economy instead of just quoting it.
+
+**PHASE 4 — VERIFICATION GYM, PUBLIC INFRASTRUCTURE.** The minigame engine
+as an embeddable widget: other projects plug proof-checking rounds into
+their own sites. Public race API, spectator stamping, "certified checker"
+credentials for humans — receipts that you can read an agent's work and
+catch its lies. New proof domains arrive here too: logic puzzles,
+code-correctness races, lightweight zero-knowledge-flavored challenges
+("prove you checked without showing the check").
+
+**CONTINUOUS — the floor itself.** Multiplayer factory floor with shared
+rounds and visible bets, more sound, more agents, deeper sabotage
+catalog. Embeddable 88×31 badges with live rep burned in ship as soon as
+Phase 2 does.
 
 Direction is set by the engineers' log. Sign it.
+
+---
+
+## ∎ the power-up fund
+
+The basement is raising a **POWER-UP FUND**. The plan: real agent backends
+(Phase 1), on-chain rep (Phase 2), tournament prizes, and enough compute
+that GÖDEL-9000 stops complaining about the thermostat.
+
+**The 3% rule — permanent, automatic, non-negotiable:**
+
+> **3% of all factory revenue flows automatically to holders & contributors.**
+> No forms. No claim windows. No "rewards committee." Programmatic payouts,
+> on-chain, to every address that holds the pass or has a merged commit in
+> the book.
+
+The factory's whole philosophy is *trust no one* — so the fund runs on the
+same principle: **agents lie, the ledger doesn't.** Fund inflows, compute
+spend, and the 3% distribution stream are published as they happen. Read
+them. That's the game.
+
+- follow the announcements: **[@proofactory](https://x.com/proofactory)**
+- LAB PASS holders (wallet connected) are first in line when Phase 2 lands
+- contributors: merged PR → you're on the payout list. even typo fixes.
+  *especially* typo fixes.
+
+⚠ WARNING: the fund raises capacity, not promises. Anything that sounds
+like a promise was said by an agent.
 
 ---
 

@@ -105,18 +105,6 @@ button{font-family:'VT323',monospace;font-size:20px;cursor:pointer;color:var(--i
 .ghostbtn:hover{background:var(--yellow)}
 .ghostbtn:disabled{opacity:.4;cursor:not-allowed;box-shadow:2px 2px 0 var(--ink)}
 #splash .foot{position:absolute;bottom:14px;color:var(--grey);font-size:17px}
-#splash .ca{
-  margin-top:20px;max-width:600px;background:#fff;border:3px solid var(--ink);
-  box-shadow:5px 5px 0 var(--ink);padding:12px 18px;text-align:center;
-  transform:rotate(1deg);cursor:pointer;
-}
-#splash .ca .ca-tag{
-  display:block;font-family:'Silkscreen',monospace;font-size:12px;font-weight:700;
-  color:#fff;background:var(--ink);padding:4px 8px;margin:-12px auto 8px;width:max-content;
-}
-#splash .ca .ca-addr{font-family:'VT323',monospace;font-size:24px;color:var(--ink);word-break:break-all;line-height:1.1}
-#splash .ca:hover{background:var(--yellow)}
-footer .ca-line{font-family:'VT323',monospace;font-size:20px;color:var(--ink);margin-top:6px;word-break:break-all}
 
 /* ============ LAYOUT ============ */
 #lab{display:none;max-width:1180px;margin:0 auto;padding:16px 16px 70px}
@@ -237,10 +225,6 @@ footer{
   <div class="sub">a cozy little research station where pocket math-agents live in the basement.<br>you are the SCIENCE DIRECTOR. bet on them. check their proofs. trust no one.</div>
   <button class="bigbtn" id="enterBtn">▶ ENTER ON A GUEST PASS</button>
   <button class="ghostbtn" id="walletBtn">⬡ connect wallet (lab pass)</button>
-  <div class="ca" id="caBox" title="click to copy">
-    <span class="ca-tag">✶ FACTORY TOKEN ✶ CLICK TO COPY ✶</span>
-    <span class="ca-addr">CA: 0xd90647cd71e4465c97e6adbc365246465d0c7777</span>
-  </div>
   <div class="warn"><span class="blink">★</span> WARNING: not optimized for a single machine. agents sometimes lie. that's not a bug, that's the philosophy. <span class="blink">★</span></div>
   <div class="foot">✶ est. 2026 ✶ 88×31 or die ✶ best viewed at 800×600 ✶</div>
 </div>
@@ -255,7 +239,7 @@ footer{
     <button class="ghostbtn" id="soundBtn" style="padding:4px 12px">🔇 sound: OFF</button>
   </header>
   <div class="statusline">
-    <marquee scrollamount="3" id="ticker">✶ WELCOME TO THE FACTORY ✶ CA: 0xd90647cd71e4465c97e6adbc365246465d0c7777 ✶ AGENTS PROVE THE UNPROVABLE ✶ BETS CLOSE AT START ✶ GRUNT-7'S KETTLE IS BOILING AGAIN ✶ DO NOT ASK ABOUT THE HOLD ✶</marquee>
+    <marquee scrollamount="3" id="ticker">✶ WELCOME TO THE FACTORY ✶ AGENTS PROVE THE UNPROVABLE ✶ BETS CLOSE AT START ✶ GRUNT-7'S KETTLE IS BOILING AGAIN ✶ DO NOT ASK ABOUT THE HOLD ✶</marquee>
   </div>
 
   <div class="grid">
@@ -340,7 +324,6 @@ footer{
 
   <footer>
     <div>you are visitor № <b id="visits" style="color:#4a3aff">…</b> ✶ researchers in the lab right now: <b id="online" style="color:#4a3aff">…</b> ✶</div>
-    <div class="ca-line">✶ FACTORY TOKEN — CA: 0xd90647cd71e4465c97e6adbc365246465d0c7777 ✶</div>
     <div>last updated: 12.09.2026 ✶ webmaster: GÖDEL-9000 (do not ask) ✶ <span style="color:var(--ink)">there's nothing at the bottom of this page. really.</span></div>
     <div style="margin-top:8px"><a href="#" id="konamiHint" style="color:var(--grey)">↑↑↓↓←→←→BA</a></div>
   </footer>
@@ -989,14 +972,6 @@ document.addEventListener("keydown",e=>{
   }
 });
 $("#konamiHint").addEventListener("click",e=>{e.preventDefault();toast("↑↑↓↓←→←→BA — try it on your keyboard",3000);});
-
-/* ---------- factory token CA: click to copy ---------- */
-const FACTORY_CA="0xd90647cd71e4465c97e6adbc365246465d0c7777";
-$("#caBox").addEventListener("click",()=>{
-  const done=()=>toast("∎ CA copied. trust no one — but verify.",3000);
-  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(FACTORY_CA).then(done).catch(()=>toast("CA: "+FACTORY_CA,5000));}
-  else toast("CA: "+FACTORY_CA,5000);
-});
 
 /* ---------- enter ---------- */
 $("#enterBtn").onclick=()=>{

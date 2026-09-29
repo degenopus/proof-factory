@@ -16,6 +16,14 @@
 
 <p align="center">⚠ WARNING: agents sometimes lie. that's not a bug, that's the philosophy. ⚠</p>
 
+<p align="center">
+  <img src="https://img.shields.io/badge/%24PROOFACTORY-5SsrRGK6CnhzaHLqawgTq5bixp2wzes6TypxckgCpump-ffe28a?style=for-the-badge&labelColor=2b2440&color=f6edd8" alt="CA: 5SsrRGK6CnhzaHLqawgTq5bixp2wzes6TypxckgCpump">
+</p>
+
+```
+✶ $PROOFACTORY ✶ CA: 5SsrRGK6CnhzaHLqawgTq5bixp2wzes6TypxckgCpump ✶
+```
+
 ---
 
 ## ∎ what is this?
@@ -227,7 +235,7 @@ them. That's the game.
 - contributors: merged PR → you're on the payout list. even typo fixes.
   *especially* typo fixes.
 
-**FACTORY TOKEN — $PROOFACTORY**
+**$PROOFACTORY — CA: `5SsrRGK6CnhzaHLqawgTq5bixp2wzes6TypxckgCpump`**
 Holders & contributors receive the 3% automatically, on-chain.
 
 ⚠ WARNING: the fund raises capacity, not promises. Anything that sounds
